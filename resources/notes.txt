@@ -1,0 +1,255 @@
+Asian people fall into a wide area in KNN, because they combine all features o
+A:
+{'A': 19, 'N': 11, 'C': 7, 'H': 13}
+38.00 % hit rate
+N:
+{'A': 16, 'N': 17, 'C': 10, 'H': 7}
+34.00 % hit rate
+C:
+{'A': 12, 'N': 12, 'C': 17, 'H': 9}
+34.00 % hit rate
+H:
+{'A': 14, 'N': 10, 'C': 8, 'H': 18}
+36.00 % hit rate
+
+K=50
+H:
+{'N': 9, 'A': 12, 'H': 21, 'C': 8}
+42.00 % hit rate
+C:
+{'N': 6, 'A': 19, 'H': 9, 'C': 16}
+32.00 % hit rate
+N:
+{'N': 15, 'A': 17, 'H': 7, 'C': 11}
+30.00 % hit rate
+A:
+{'N': 13, 'A': 18, 'H': 7, 'C': 12}
+36.00 % hit rate
+
+
+
+------------------------------------ AFTER APPLYING STDDEV -----------------------------
+
+C:
+{'A': 10, 'H': 9, 'C': 24, 'N': 7}
+48.00 % hit rate
+
+A:
+{'A': 32, 'H': 6, 'C': 10, 'N': 2}
+64.00 % hit rate
+
+N:
+{'A': 5, 'H': 2, 'C': 11, 'N': 32}
+64.00 % hit rate
+
+H:
+{'A': 16, 'H': 17, 'C': 11, 'N': 6}
+34.00 % hit rate
+
+------------------------------- AFTER NORMALIZATION AND EYE FEATURES ----------------------
+
+Average result hit rate: 44.50 %
+Standard deviation of results: 20.81
+
+-------------------------------- NORMALIZATION WITHOUT EYE FEATURES -----------------------
+
+Average result hit rate: 54.00 %
+Standard deviation of results: 24.11
+
+
+knn = 10
+train = 110
+test = 50
+filter_hair = True
+filter_background = True
+Average result hit rate: 56.00 %
+Standard deviation of results: 6.73
+
+
+KNN settings:
+	 K: 10
+	 training set: 110 per race
+	 test set: 50 per race
+
+	 Filter background: True
+	 Filter hair: True
+58.00 % hit rate
+Average result hit rate: 66.00 %
+Standard deviation of results: 15.58
+
+
+{'N': 4, 'A': 16, 'C': 8, 'H': 22}
+44.00 % hit rate
+{'A': 13, 'C': 30, 'H': 7}
+60.00 % hit rate
+{'N': 41, 'A': 4, 'H': 5}
+82.00 % hit rate
+{'N': 1, 'A': 42, 'C': 4, 'H': 3}
+84.00 % hit rate
+Average result hit rate: 67.50 %
+Standard deviation of results: 19.07
+
+
+{'N': 1, 'A': 36, 'C': 6, 'H': 7}
+72.00 % hit rate
+{'N': 39, 'A': 5, 'H': 6}
+78.00 % hit rate
+{'H': 22, 'A': 17, 'C': 9, 'N': 2}
+44.00 % hit rate
+{'H': 6, 'A': 13, 'C': 30, 'N': 1}
+60.00 % hit rate
+Average result hit rate: 63.50 %
+Standard deviation of results: 15.00
+
+{'C': 15, 'H': 5, 'A': 10}
+50.00 % hit rate
+{'N': 27, 'A': 3}
+90.00 % hit rate
+{'C': 4, 'N': 1, 'H': 20, 'A': 5}
+66.67 % hit rate
+{'C': 3, 'H': 1, 'A': 26}
+86.67 % hit rate
+Average result hit rate: 73.33 %
+Standard deviation of results: 18.66
+
+{'N': 1, 'H': 3, 'C': 18, 'A': 8}
+60.00 % hit rate
+{'H': 3, 'A': 26, 'C': 1}
+86.67 % hit rate
+{'H': 3, 'N': 22, 'A': 5}
+73.33 % hit rate
+{'N': 1, 'H': 15, 'A': 10, 'C': 4}
+50.00 % hit rate
+Average result hit rate: 67.50 %
+Standard deviation of results: 15.96
+
+{'C': 5, 'A': 7, 'H': 14, 'N': 4}
+46.67 % hit rate
+{'C': 20, 'A': 5, 'H': 5}
+66.67 % hit rate
+{'C': 1, 'A': 25, 'H': 3, 'N': 1}
+83.33 % hit rate
+{'A': 2, 'H': 2, 'N': 26}
+86.67 % hit rate
+Average result hit rate: 70.83 %
+Standard deviation of results: 18.33
+
+{'N': 28, 'H': 2}
+93.33 % hit rate
+{'H': 2, 'C': 20, 'A': 8}
+66.67 % hit rate
+{'C': 1, 'H': 5, 'A': 24}
+80.00 % hit rate
+{'H': 16, 'N': 2, 'C': 4, 'A': 8}
+53.33 % hit rate
+Average result hit rate: 73.33 %
+Standard deviation of results: 17.21
+
+
+--------------------------------------- 8 bins histogram ----------------------------------------
+
+{'N': 25, 'A': 1, 'H': 4}
+83.33 % hit rate
+{'C': 1, 'A': 25, 'H': 4}
+83.33 % hit rate
+{'N': 1, 'C': 5, 'A': 5, 'H': 19}
+63.33 % hit rate
+{'C': 26, 'H': 4}
+86.67 % hit rate
+Average result hit rate: 79.17 %
+Standard deviation of results: 10.67
+
+H:
+{'N': 1, 'A': 10, 'C': 2, 'H': 17}
+56.67 % hit rate
+A:
+{'A': 29, 'H': 1}
+96.67 % hit rate
+N:
+{'N': 27, 'A': 2, 'H': 1}
+90.00 % hit rate
+C:
+{'C': 26, 'H': 4}
+86.67 % hit rate
+Average result hit rate: 82.50 %
+Standard deviation of results: 17.72
+
+
+------------------------------------ NON - HISPANIC DATASET -------------------------------------
+
+
+{'N': 25, 'A': 4, 'C': 1}
+83.33 % hit rate
+{'C': 4, 'A': 25, 'N': 1}
+83.33 % hit rate
+{'C': 20, 'A': 8, 'N': 2}
+66.67 % hit rate
+Average result hit rate: 77.78 %
+Standard deviation of results: 9.62
+
+{'A': 12, 'C': 17, 'N': 1}
+56.67 % hit rate
+{'A': 4, 'N': 25, 'C': 1}
+83.33 % hit rate
+{'A': 28, 'C': 2}
+93.33 % hit rate
+Average result hit rate: 77.78 %
+Standard deviation of results: 18.95
+
+------------------------ NON - HISPANIC DATASET - 8 - BINS ONLY -------------------------------------
+
+
+A:
+{'A': 29, 'C': 1}
+96.67 % hit rate
+C:
+{'A': 4, 'C': 26}
+86.67 % hit rate
+N:
+{'A': 3, 'N': 27}
+90.00 % hit rate
+Average result hit rate: 91.11 %       <<---------------------
+Standard deviation of results: 5.09      <<--------------------
+
+
+C:
+{'C': 29, 'A': 1}
+96.67 % hit rate
+A:
+{'C': 1, 'A': 29}
+96.67 % hit rate
+N:
+{'A': 2, 'N': 28}
+93.33 % hit rate
+Average result hit rate: 95.56 %
+Standard deviation of results: 1.92
+
+------------------------ NON - HISPANIC DATASET - 8 - BINS ONLY; FILTER HAIR---------------------------
+
+{'N': 27, 'A': 3}
+90.00 % hit rate
+{'A': 26, 'C': 3, 'N': 1}
+86.67 % hit rate
+{'A': 12, 'C': 17, 'N': 1}
+56.67 % hit rate
+Average result hit rate: 77.78 %
+Standard deviation of results: 18.36
+
+
+----------------------------------------- 16 BIN DATASET ----------------------------------------------
+
+
+H:
+{'C': 6, 'H': 31, 'N': 1, 'A': 12}
+62.00 % hit rate                                   <<<<<<<<<<<<<<<<<<
+A:
+{'C': 3, 'H': 4, 'A': 43}
+86.00 % hit rate
+N:
+{'N': 43, 'H': 5, 'A': 2}
+86.00 % hit rate
+C:
+{'A': 2, 'H': 5, 'C': 43}
+86.00 % hit rate
+Average result hit rate: 80.00 %
+Standard deviation of results: 12.00
