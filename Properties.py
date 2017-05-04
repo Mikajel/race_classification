@@ -19,9 +19,17 @@ audio_finished = 'classification_finished.wav'
 race_class_labels = [
     'asian',
     'negroid',
-    'caucasian',
-    'hispanic'
+    'caucasian'
 ]
+
+# select desired method of classification
+use_knn = False
+use_fnn = False
+use_kmeans = False
+use_tree = True
+
+# displays one image per race in loaded dataset
+test_load = False
 
 # size of a train and test dataset per race for supervised learning
 # should be divisible by fnn_batch_size to maximize amount of training samples for fnn
@@ -56,7 +64,7 @@ features_histogram = True
 # bin amount - number of groups for color values in histograms, 250 instead of 256 ignores background
 hist_bin_amount = 250
 # number of bins for histogram feature
-hist_bin_per_color = 16
+hist_bin_per_color = 8
 
 features_stdev = False
 features_eyes_distance = False
@@ -73,14 +81,6 @@ eye_size_min = 20
 
 eye_dist_max = 85
 eye_dist_min = 30
-
-# select desired method of classification
-use_knn = False
-use_fnn = True
-use_kmeans = False
-
-# displays one image per race in loaded dataset
-test_load = False
 
 # Values of max and min for normalization of input values
 max_color = 150.0

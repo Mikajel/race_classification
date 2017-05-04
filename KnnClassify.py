@@ -7,7 +7,8 @@ import Properties as prop
 
 def classify_knn(vectors_races: {}, info=False):
 
-    test_data = []
+    race_to_label, label_to_race = create_race_label_mapping()
+
     print('-------- Classification using K-nearest --------')
     print('\t K: %d \n\t' % prop.knn_neighbors)
 
@@ -19,54 +20,50 @@ def classify_knn(vectors_races: {}, info=False):
         for race in train_vectors_races.keys():
             print('\tRace: %*s \t Amount: %*s' % (10, race, 5, str(len(train_vectors_races[race]))))
 
-    trained_model = train_knn_classifier(train_vectors_races, info=info)
+    # train knn classifier
+    trained_model = train_knn_classifier(train_vectors_races, race_to_label, info=info)
 
-    races_order = []
+    test_data = []
+    test_labels = []
 
     # create test data
     for race in vectors_races.keys():
 
-        races_order.append(race)
         # add next race images into test data, save race name into races_order
         test_data += test_vectors_races[race]
+        test_labels += len(test_vectors_races[race])*[race_to_label[race]]
 
-    # testing
-    race_results = []
+    test_predictions = []
 
-    for race in range(0, len(races_order)):
+    hit = 0
+    total = len(test_data)
 
-        print(races_order[race][0].upper() + ': ', end='')
+    for index in range(len(test_data)):
 
-        results_matrix_row = {}
+        prediction, neighbours = classify_vector(
+            trained_model,
+            test_data[index],
+            k=prop.knn_neighbors
+        )
 
-        for index in range(0, prop.test_size):
+        prediction = int(prediction[0])
 
-            results, neighbours = classify_vector(
-                trained_model,
-                test_data[race*prop.test_size + index],
-                k=prop.knn_neighbors
-            )
+        test_predictions.append(prediction)
 
-            if str(chr(results)) in results_matrix_row.keys():
-                results_matrix_row[str(chr(results))] += 1
-            else:
-                results_matrix_row[str(chr(results))] = 1
+        if prediction == test_labels[index]:
+            hit += 1
 
-        print(results_matrix_row)
-        try:
-            print('%.2f %% hit rate' %
-                  (100*int(results_matrix_row[races_order[race][0].upper()])/prop.test_size))
-            race_results.append(100*int(results_matrix_row[races_order[race][0].upper()])/prop.test_size)
-        except KeyError:
-            print('%.2f %% hit rate' % 0)
-            race_results.append(0)
+    cm_predictions, cm_labels = util.conf_matrix_mapping(label_to_race, test_labels, test_predictions)
+    util.visualize_conf_matrix(cm_labels, cm_predictions, prop.race_class_labels)
 
-    print('Average result hit rate: %.2f %%' % (stat.mean(race_results)))
-    print('Standard deviation of results: %.2f' % stat.stdev(race_results), end='\n\n\n')
+    print('Knn hit rate: %.2f %%' % (100*hit/total), end='\n\n\n')
 
 
 # Train KNN model with training data - images
-def train_knn_classifier(train_data_vectors, info=False):
+def train_knn_classifier(
+        train_data_vectors: [],
+        race_to_label_mapping: dict,
+        info=False) -> opencv.ml.KNearest_create():
 
     train_data = []
     responses = []
@@ -77,23 +74,10 @@ def train_knn_classifier(train_data_vectors, info=False):
         for sample in train_data_vectors[race]:
 
             train_data.append(np.asarray(sample).astype(np.float32))
-
-            if race == 'asian':
-                responses.append(65)
-
-            if race == 'negroid':
-                responses.append(78)
-
-            if race == 'caucasian':
-                responses.append(67)
-
-            if race == 'hispanic':
-                responses.append(72)
+            responses.append(race_to_label_mapping[race])
 
     train_data = np.asarray(train_data)
     responses = np.asarray(responses)
-
-    print(len(train_data), len(responses))
 
     if info:
         for index in range(0, len(train_data)):
@@ -111,3 +95,18 @@ def classify_vector(knn_model, sample, k=10):
     ret, results, neighbours, dist = knn_model.findNearest(np.asarray([np.asarray(sample).astype(np.float32)]), k)
 
     return results, neighbours
+
+
+# Create mapping between races and their integer labels for classification
+def create_race_label_mapping():
+
+    race_to_label_mapping = dict()
+    label_to_race_mapping = dict()
+    index = 0
+
+    for race in prop.race_class_labels:
+        race_to_label_mapping[race] = index
+        label_to_race_mapping[index] = race
+        index += 1
+
+    return race_to_label_mapping, label_to_race_mapping

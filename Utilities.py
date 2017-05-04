@@ -1,8 +1,78 @@
 import Properties as prop
 import cv2 as opencv
 import numpy as np
-from matplotlib import pyplot as plt
+import matplotlib.pyplot as plt
+from sklearn.metrics import confusion_matrix
 import os
+import itertools
+
+
+# Switch labels and predictions from numbers to races; decrypt races
+def conf_matrix_mapping(label_to_race_mapping: dict(), labels: [], predictions: []):
+
+    labels_decrypted = []
+    predictions_decrypted = []
+
+    for index in range(len(predictions)):
+        labels_decrypted.append(label_to_race_mapping[labels[index]])
+        predictions_decrypted.append(label_to_race_mapping[predictions[index]])
+
+    return predictions_decrypted, labels_decrypted
+
+
+# as taken from scipy manual for confusion matrix usage
+# http://scikit-learn.org/stable/auto_examples/model_selection/plot_confusion_matrix.html#sphx-glr-auto-examples-model-selection-plot-confusion-matrix-py
+def plot_confusion_matrix(cm, classes,
+                          normalize=False,
+                          title='Confusion matrix',
+                          cmap=plt.cm.Blues):
+    """
+    This function prints and plots the confusion matrix.
+    Normalization can be applied by setting `normalize=True`.
+    """
+    plt.imshow(cm, interpolation='nearest', cmap=cmap)
+    plt.title(title)
+    plt.colorbar()
+    tick_marks = np.arange(len(classes))
+    plt.xticks(tick_marks, classes, rotation=45)
+    plt.yticks(tick_marks, classes)
+
+    if normalize:
+        cm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
+        print("Normalized confusion matrix")
+    else:
+        print('Confusion matrix, without normalization')
+
+    print(cm)
+
+    thresh = cm.max() / 2.
+    for i, j in itertools.product(range(cm.shape[0]), range(cm.shape[1])):
+        plt.text(j, i, cm[i, j],
+                 horizontalalignment="center",
+                 color="white" if cm[i, j] > thresh else "black")
+
+    plt.tight_layout()
+    plt.ylabel('True label')
+    plt.xlabel('Predicted label')
+
+
+def visualize_conf_matrix(labels, predictions, classes, precision=2):
+
+    # Compute confusion matrix
+    cnf_matrix = confusion_matrix(labels, predictions)
+    np.set_printoptions(precision=precision)
+
+    # Plot non-normalized confusion matrix
+    plt.figure()
+    plot_confusion_matrix(cnf_matrix, classes=classes,
+                          title='Confusion matrix, without normalization')
+
+    # Plot normalized confusion matrix
+    plt.figure()
+    plot_confusion_matrix(cnf_matrix, classes=classes, normalize=True,
+                          title='Normalized confusion matrix')
+
+    plt.show()
 
 
 def color_deviations(img) -> []:
@@ -92,7 +162,7 @@ def encode_histogram(histogram_dict, feature_bins_amount=prop.hist_bin_per_color
 
     avg_colors = []
 
-    for color in histogram_dict.keys():
+    for color in ['b', 'g', 'r']:
 
         actual_bins = histogram_dict[color]
         bin_amount = len(actual_bins)

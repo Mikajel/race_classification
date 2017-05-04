@@ -1,9 +1,9 @@
 import warnings
 import Properties as prop
-import KnnClassify as knn
-from KmeansClassify import classify_kmeans
 from KnnClassify import classify_knn
+from KmeansClassify import classify_kmeans
 from FeedforwardNeural import classify_fnn
+from DecisionTree import classify_tree
 import Audio as aud
 import Utilities as util
 import DataLoad as data
@@ -20,13 +20,10 @@ if prop.use_knn:
 if prop.use_kmeans:
     classify_kmeans(vectors_races, info=True)
 
+if prop.use_tree:
+    classify_tree(vectors_races, info=True)
+
 if prop.use_fnn:
     classify_fnn(vectors_races, info=True)
 
 # aud.play_sound_wav(prop.audio_finished)
-
-
-
-
-
-
