@@ -2,16 +2,16 @@ import tensorflow as tf
 import numpy as np
 import Properties as prop
 from random import shuffle
-from Utilities import subset_data_train_test
+from Utilities import subset_data_train_test, visualize_conf_matrix, conf_matrix_mapping
 
 
 def classify_fnn(vectors_races, info=False):
 
     train_data, test_data = subset_data_train_test(vectors_races)
-    train_vectors, train_labels, train_mapping = create_vectors_and_labels(train_data)
-    test_vectors, test_labels, test_mapping = create_vectors_and_labels(test_data)
+    train_vectors, train_labels, train_label_mapping, label_to_race = create_vectors_and_labels(train_data)
+    test_vectors, test_labels, test_label_mapping, label_to_race = create_vectors_and_labels(test_data)
 
-    train_fnn(train_vectors, train_labels, test_vectors, test_labels)
+    train_fnn(train_vectors, train_labels, test_vectors, test_labels, test_label_mapping, label_to_race)
 
 
 def train_fnn(
@@ -19,6 +19,8 @@ def train_fnn(
         train_labels: [],
         test_vectors: [],
         test_labels: [],
+        label_mapping: dict,
+        label_to_race: dict,
         learning_rate: float = prop.fnn_learning_rate,
         hidden_size: int = prop.fnn_hidden_size):
 
@@ -27,7 +29,7 @@ def train_fnn(
     session_graph = tf.Graph()
     with session_graph.as_default():
 
-        # variables.
+        # variables
         batch_size = prop.fnn_batch_size
         num_of_labels_session = len(prop.race_class_labels)
 
@@ -113,12 +115,21 @@ def train_fnn(
 
         print('Number of dataset walks: %d' % dataset_walks)
 
+        # Final test
+        test_accuracy = evaluate_accuracy(
+            test_prediction.eval(), test_labels, print_confusion_matrix=True, label_to_race=label_to_race)
+
+        print("Test accuracy: %.1f%%\n" % test_accuracy)
+
 
 # take predictions of neural networks and return hit rate
-def evaluate_accuracy(predictions: [], labels: [], print_confusion_matrix: bool =False) -> float:
+def evaluate_accuracy(predictions: [], labels: [], print_confusion_matrix: bool = False, label_to_race: dict = None) -> float:
 
     hit = 0
     total = len(predictions)
+
+    integer_predictions = []
+    integer_labels = []
 
     # evaluate every prediction
     for index in range(len(predictions)):
@@ -127,11 +138,19 @@ def evaluate_accuracy(predictions: [], labels: [], print_confusion_matrix: bool 
         pred_index_max = max(range(len(predictions[index])), key=predictions[index].__getitem__)
         label_index_max = max(range(len(labels[index])), key=labels[index].__getitem__)
 
+        integer_predictions.append(pred_index_max)
+        integer_labels.append(label_index_max)
+
         if label_index_max == pred_index_max:
             hit += 1
 
     if print_confusion_matrix:
-        print('This is a trial version. Purchase a full version to see confusion matrix.')
+        if label_to_race is not None:
+
+            cm_predictions, cm_labels = conf_matrix_mapping(label_to_race, integer_labels, integer_predictions)
+            visualize_conf_matrix(cm_labels, cm_predictions, prop.race_class_labels)
+        else:
+            print('Mapping not supplied')
 
     return 100*(hit/total)
 
@@ -166,6 +185,7 @@ def split_to_batches(train_vectors, train_labels, batch_size=prop.fnn_batch_size
 def create_vectors_and_labels(vectors_races: dict):
 
     label_mapping = dict()
+    label_to_race = dict()
     counter = 0
 
     # create mapping from output labels to race labels
@@ -173,8 +193,11 @@ def create_vectors_and_labels(vectors_races: dict):
 
         label = [0] * len(prop.race_class_labels)
         label[counter] = 1
-        counter += 1
         label_mapping[race] = label
+
+        label_to_race[counter] = race
+
+        counter += 1
 
     created_vectors = []
     created_labels = []
@@ -201,6 +224,6 @@ def create_vectors_and_labels(vectors_races: dict):
     final_vectors = [tup[0] for tup in tuples_to_shuffle]
     final_labels = [tup[1] for tup in tuples_to_shuffle]
 
-    return final_vectors, final_labels, label_mapping
+    return final_vectors, final_labels, label_mapping, label_to_race
 
 

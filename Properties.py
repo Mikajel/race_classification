@@ -19,14 +19,15 @@ audio_finished = 'classification_finished.wav'
 race_class_labels = [
     'asian',
     'negroid',
-    'caucasian'
+    'caucasian',
+    'hispanic'
 ]
 
 # select desired method of classification
 use_knn = False
-use_fnn = False
+use_fnn = True
 use_kmeans = False
-use_tree = True
+use_tree = False
 
 # displays one image per race in loaded dataset
 test_load = False
@@ -44,7 +45,7 @@ knn_neighbors = 5
 
 # feed-forward NN parameters
 fnn_learning_rate = 0.01
-fnn_hidden_size = 128
+fnn_hidden_size = 32
 fnn_batch_size = 50
 fnn_stagnation_definition = 0.0
 fnn_stagnation_tolerance = 8
@@ -64,7 +65,7 @@ features_histogram = True
 # bin amount - number of groups for color values in histograms, 250 instead of 256 ignores background
 hist_bin_amount = 250
 # number of bins for histogram feature
-hist_bin_per_color = 8
+hist_bin_per_color = 4
 
 features_stdev = False
 features_eyes_distance = False
