@@ -3,3 +3,7 @@ Dataset has been filtered to obtain smooth images with clean samples of races, m
 Dataset usage rules are included in this folder as README3_0.pdf
 Dataset can be obtained from http://wiki.cnbc.cmu.edu/Face_Place, however, has to be converted to bmp to avoid opencv python bug.
 Screenshot of files included to make clear organization used in source program.
+Files used in project:
+	asian/hispanic/negroid/caucasian - original files in jpg format
+	bmp_asian/bmp_hispanic/bmp_negroid/bmp_caucasian - filtered dataset converted to bmp
+	bmp_asian/bmp_hispanic/bmp_negroid/bmp_caucasian - unfiltered dataset converted to bmp
