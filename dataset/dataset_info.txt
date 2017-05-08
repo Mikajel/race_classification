@@ -1,0 +1,5 @@
+This project is using Final Release (3.0) of the Face-Place Face Database.
+Dataset has been filtered to obtain smooth images with clean samples of races, mostly without glasses and with clear face view.
+Dataset usage rules are included in this folder as README3_0.pdf
+Dataset can be obtained from http://wiki.cnbc.cmu.edu/Face_Place, however, has to be converted to bmp to avoid opencv python bug.
+Screenshot of files included to make clear organization used in source program.
