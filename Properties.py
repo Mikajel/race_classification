@@ -31,6 +31,8 @@ use_tree = False
 
 # displays one image per race in loaded dataset
 test_load = False
+# displays incorrectly classified samples for each method
+display_incorrect = True
 
 # size of a train and test dataset per race for supervised learning
 # should be divisible by fnn_batch_size to maximize amount of training samples for fnn

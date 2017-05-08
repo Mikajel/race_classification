@@ -34,15 +34,19 @@ def classify_knn(vectors_races: {}, info=False):
         test_labels += len(test_vectors_races[race])*[race_to_label[race]]
 
     test_predictions = []
+    # list of tuples (sample vector, label, prediction)
+    failed_samples = []
 
     hit = 0
-    total = len(test_data)
+    test_amount = len(test_data)
 
-    for index in range(len(test_data)):
+    for index in range(test_amount):
+
+        sample = test_data[index]
 
         prediction, neighbours = classify_vector(
             trained_model,
-            test_data[index],
+            sample,
             k=prop.knn_neighbors
         )
 
@@ -56,7 +60,16 @@ def classify_knn(vectors_races: {}, info=False):
     cm_predictions, cm_labels = util.conf_matrix_mapping(label_to_race, test_labels, test_predictions)
     util.visualize_conf_matrix(cm_labels, cm_predictions, prop.race_class_labels)
 
-    print('Knn hit rate: %.2f %%' % (100*hit/total), end='\n\n\n')
+    # collect all incorrectly classified samples for display and analytics
+    for index in range(test_amount):
+
+        if cm_predictions[index] != cm_labels[index]:
+            failed_sample = (test_data[index], cm_predictions[index], cm_labels[index])
+            failed_samples.append(failed_sample)
+
+    print('Knn hit rate: %.2f %%' % (100*hit/test_amount), end='\n\n\n')
+
+    return failed_samples
 
 
 # Train KNN model with training data - images

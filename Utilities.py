@@ -56,6 +56,8 @@ def plot_confusion_matrix(cm, classes,
     plt.xlabel('Predicted label')
 
 
+# as taken from scipy manual for confusion matrix usage
+# http://scikit-learn.org/stable/auto_examples/model_selection/plot_confusion_matrix.html#sphx-glr-auto-examples-model-selection-plot-confusion-matrix-py
 def visualize_conf_matrix(labels, predictions, classes, precision=2):
 
     # Compute confusion matrix
@@ -75,6 +77,7 @@ def visualize_conf_matrix(labels, predictions, classes, precision=2):
     plt.show()
 
 
+# Count the average difference of all pixels from "mean pixel" for every channel BGR
 def color_deviations(img) -> []:
 
     averages = []
@@ -114,9 +117,37 @@ def color_deviations(img) -> []:
     return [b_dev, g_dev, r_dev]
 
 
-# subset the vectors from all samples into the amount we wish to use for classification training and testing
-# size of subset is determined by property file variable 'train_size' and 'test_size'
-def subset_data_train_test(vectors_races: {}) -> dict:
+# Accepts set of tuples(sample vector, predicted race, true race) and mapping dict created by preprocess_training_data
+def display_sample_set(samples, backup_mapping):
+
+    sample_size = len(samples)
+
+    for index in range(sample_size):
+
+        image_label = 'label_' + samples[index][2] + '_predict_' + samples[index][1]
+        img = search_backup_image(sample_vector=samples[index][0], backup_mapping=backup_mapping)
+
+        opencv.imshow(winname=image_label, mat=img)
+        opencv.waitKey(0)
+        opencv.destroyAllWindows()
+
+
+# Go through backup created by preprocess_training_data to find image corresponding to sample vector
+def search_backup_image(sample_vector, backup_mapping):
+
+    print(sample_vector)
+    for index in range(len(backup_mapping)):
+
+        if sample_vector == backup_mapping[index][0]:
+            return backup_mapping[index][2]
+
+    print('Returning None')
+    return None
+
+
+# Subset the vectors from all samples into the amount we wish to use for classification training and testing
+# Size of subset is determined by property file variable 'train_size' and 'test_size'
+def subset_data_train_test(vectors_races: dict) -> dict:
 
     train_vectors_races = dict()
     test_vectors_races = dict()
@@ -135,9 +166,13 @@ def subset_data_train_test(vectors_races: {}) -> dict:
 
 # Counts features of given images
 # Return a dictionary of races containing array of samples(sample = array of encoded features) to feed to classification
+# Return an array of tuples for displaying samples (sample features, race label, image object)
 def preprocess_training_data(images_dict, info=False):
 
     dict_races_samples = {}
+    dict_display_samples = {}
+
+    display_backup = []
 
     # process all races in dictionary
     for race in images_dict:
@@ -147,12 +182,14 @@ def preprocess_training_data(images_dict, info=False):
 
         current_race_images = images_dict[race]
         for img in current_race_images:
-            current_race_samples.append(count_features(img=img, info=info))
+            current_sample = count_features(img=img, info=info)
+            current_race_samples.append(current_sample)
+            display_backup.append((current_sample, race, img))
 
         dict_races_samples[race] = current_race_samples
 
     print()
-    return dict_races_samples
+    return dict_races_samples, display_backup
 
 
 # Pre-process histogram values
@@ -180,8 +217,8 @@ def encode_histogram(histogram_dict, feature_bins_amount=prop.hist_bin_per_color
     return avg_colors
 
 
-# count input features for a single image
-# current features:
+# Count input features for a single image
+# Current features:
 #   encoded histogram           (BGR - 3* bin size values)
 #   deviation from mean pixel   (BGR - 3 values)
 #   eye distance                (1 value)

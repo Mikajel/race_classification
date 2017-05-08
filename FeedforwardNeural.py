@@ -11,9 +11,14 @@ def classify_fnn(vectors_races, info=False):
     train_vectors, train_labels, train_label_mapping, label_to_race = create_vectors_and_labels(train_data)
     test_vectors, test_labels, test_label_mapping, label_to_race = create_vectors_and_labels(test_data)
 
-    train_fnn(train_vectors, train_labels, test_vectors, test_labels, test_label_mapping, label_to_race)
+    failed_samples = train_fnn(train_vectors, train_labels, test_vectors, test_labels, test_label_mapping, label_to_race)
+
+    return failed_samples
 
 
+# Tensorflow magic with neural networks
+# Create, train and test neural network
+# Return a list of failed classifications over the test set
 def train_fnn(
         train_vectors: [],
         train_labels: [],
@@ -86,10 +91,10 @@ def train_fnn(
                         [optimizer, loss, train_prediction],
                         feed_dict=feed_dict
                     )
+                    batch_acc, _, _ = evaluate_accuracy(predictions, batch_labels)
+                    print("Batch accuracy: %.1f%%" % batch_acc)
 
-                    print("Batch accuracy: %.1f%%" % evaluate_accuracy(predictions, batch_labels))
-
-                    test_accuracy = evaluate_accuracy(
+                    test_accuracy, _, _ = evaluate_accuracy(
                         test_prediction.eval(), test_labels, print_confusion_matrix=False)
 
                     print("Test accuracy: %.1f%%\n" % test_accuracy)
@@ -116,20 +121,39 @@ def train_fnn(
         print('Number of dataset walks: %d' % dataset_walks)
 
         # Final test
-        test_accuracy = evaluate_accuracy(
+        test_accuracy, cm_predictions, cm_labels = evaluate_accuracy(
             test_prediction.eval(), test_labels, print_confusion_matrix=True, label_to_race=label_to_race)
+
+        test_amount = len(test_vectors)
+        failed_samples = []
+
+        # collect all incorrectly classified samples for display and analytics
+        for index in range(test_amount):
+
+            if cm_predictions[index] != cm_labels[index]:
+                failed_sample = (test_vectors[index], cm_predictions[index], cm_labels[index])
+                failed_samples.append(failed_sample)
 
         print("Test accuracy: %.1f%%\n" % test_accuracy)
 
+        return failed_samples
+
 
 # take predictions of neural networks and return hit rate
-def evaluate_accuracy(predictions: [], labels: [], print_confusion_matrix: bool = False, label_to_race: dict = None) -> float:
+def evaluate_accuracy(predictions: [],
+                      labels: [],
+                      print_confusion_matrix: bool = False,
+                      label_to_race: dict = None
+                      ) -> float:
 
     hit = 0
     total = len(predictions)
 
     integer_predictions = []
     integer_labels = []
+
+    cm_predictions = []
+    cm_labels = []
 
     # evaluate every prediction
     for index in range(len(predictions)):
@@ -149,10 +173,11 @@ def evaluate_accuracy(predictions: [], labels: [], print_confusion_matrix: bool 
 
             cm_predictions, cm_labels = conf_matrix_mapping(label_to_race, integer_labels, integer_predictions)
             visualize_conf_matrix(cm_labels, cm_predictions, prop.race_class_labels)
+
         else:
             print('Mapping not supplied')
 
-    return 100*(hit/total)
+    return 100*(hit/total), cm_predictions, cm_labels
 
 
 # Separates training data into batches, returns list of batches for vectors and labels

@@ -5,6 +5,9 @@ import Properties as prop
 from Utilities import subset_data_train_test, visualize_conf_matrix, conf_matrix_mapping
 
 
+# Classification method for images using decision tree method
+# Displays a confusion matrix of classification
+# Returns a list of tuples of failed classifications
 def classify_tree(vectors_races, info=False):
 
     train_vectors, test_vectors = subset_data_train_test(vectors_races)
@@ -13,6 +16,7 @@ def classify_tree(vectors_races, info=False):
 
     trained_decision_tree = train_tree(dataframe=df_train)
 
+    control_samples = []
     control_labels = []
     control_predictions = []
 
@@ -25,12 +29,25 @@ def classify_tree(vectors_races, info=False):
         for sample in actual_race_vectors:
             sample_predict = tree_predict(trained_decision_tree, sample)
 
+            control_samples.append(sample)
             control_predictions.append(sample_predict)
             control_labels.append(actual_label)
 
     cm_predictions, cm_labels = conf_matrix_mapping(train_label_to_race, control_labels, control_predictions)
 
+    test_amount = len(control_samples)
+    failed_samples = []
+
+    # collect all incorrectly classified samples for display and analytics
+    for index in range(test_amount):
+
+        if cm_predictions[index] != cm_labels[index]:
+            failed_sample = (control_samples[index], cm_predictions[index], cm_labels[index])
+            failed_samples.append(failed_sample)
+
     visualize_conf_matrix(cm_labels, cm_predictions, prop.race_class_labels)
+
+    return failed_samples
 
 
 # Predict vector race
